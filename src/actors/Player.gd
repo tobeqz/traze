@@ -6,16 +6,28 @@ export var jump_power: = 500
 export var airtime_grace_period: = 100
 export var jump_grace_period: = 100
 export var friction_factor: = 5000
+export var max_gravity_velo:= 3000
 
 var last_tick_in_air: = -10000
 var last_jump_press: = -10000
+
+func _physics_process(delta):
+	velocity = handle_movement(velocity, delta)
+	handle_collisions()
+
+	velocity = move_and_slide(velocity, Vector2.UP)
+
+func handle_collisions():
+
+	return
+
 func calculate_control_direction() -> float:
 	var left_strength = Input.get_action_strength("move_left")
 	var right_strength = Input.get_action_strength("move_right")
 	
 	return right_strength - left_strength
 	
-func _physics_process(delta):
+func handle_movement(velocity, delta) -> Vector2:
 	var current_tick: int = OS.get_ticks_msec()
 	var time_since_air: = current_tick - last_tick_in_air
 
@@ -62,7 +74,7 @@ func _physics_process(delta):
 	if is_past_air_grace:
 		velocity.x = clamp(velocity.x, -top_speed, top_speed)
 
-	print(velocity.x)
+	# Cap Y velocity so you dont instantly fall
+	velocity.y = clamp(velocity.y, -INF, max_gravity_velo)
 
-	velocity = move_and_slide(velocity, Vector2.UP)
-	
+	return velocity
