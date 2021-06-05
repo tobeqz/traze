@@ -21,7 +21,7 @@ func _physics_process(delta: float):
 	var should_jump: =  OS.get_ticks_msec() -  last_jump_input < 200
 
 	velocity.y += strength_down * speed * delta
-	velocity.x = (strength_right - strength_left) * speed * delta * bhop_mult
+	velocity.x += (strength_right - strength_left) * speed * delta * bhop_mult
 
 	if should_jump && is_on_floor():
 		print("Jumping")
