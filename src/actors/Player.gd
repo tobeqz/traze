@@ -11,15 +11,23 @@ export var max_gravity_velo:= 3000
 var last_tick_in_air: = -10000
 var last_jump_press: = -10000
 
+onready var camera = get_node("./Camera2D")
+onready var spawnpoint = get_node("../SpawnPosition")
+
+func die():
+	print("Dying")
+	camera.set("smoothing_enabled", false)
+	set("position", spawnpoint.get("position"))
+	yield(get_tree().create_timer(0.1), "timeout")
+	camera.set("smoothing_enabled", true)
+
 func _physics_process(delta):
 	velocity = handle_movement(velocity, delta)
-	handle_collisions()
-
 	velocity = move_and_slide(velocity, Vector2.UP)
 
-func handle_collisions():
-
-	return
+	# Kill player if they're below kill limit
+	if get("position").y > 5000:
+		die()
 
 func calculate_control_direction() -> float:
 	var left_strength = Input.get_action_strength("move_left")
